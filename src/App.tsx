@@ -15,7 +15,7 @@ const App: React.FC<{}> = () => (
     <Router>
         <ThemeProvider theme={theme}>
             <GlobalStyle />
-            <ToastContainer />
+            <ToastContainer position='bottom-right' />
             <LoadingBar />
             <AuthProvider>
                 <VotesProvider>

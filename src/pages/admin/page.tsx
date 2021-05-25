@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
-import { Flex, Text } from 'rebass';
+import { Flex, Heading, Text } from 'rebass';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import _ from 'lodash';
@@ -16,6 +16,7 @@ import { useFinished } from 'src/service/game/finished';
 import { TOTAL_QUOTES } from '../quotes';
 import { theme } from 'src/service/theme/configuration';
 import { ParticipantBar } from 'src/molecules/participant-bar';
+import { Modal } from 'src/atoms/modal';
 
 export const AdminPage: React.FC<{}> = () => {
     const auth = useAuth();
@@ -23,6 +24,7 @@ export const AdminPage: React.FC<{}> = () => {
     const participants = useParticipants();
     const history = useHistory();
     const hasFinished = useFinished();
+    const [showStopModal, setShowStopModal] = useState(false);
     const backToStart = () => history.push('/');
 
     if (!auth?.admin.isAdmin && !auth?.admin.loading) {
@@ -68,6 +70,7 @@ export const AdminPage: React.FC<{}> = () => {
     }
 
     const stop = () => {
+        setShowStopModal(false);
         firebase.database().ref('isGameOver').set(false);
         firebase.database().ref('activeQuote').remove()
             .then(() => toast(
@@ -133,13 +136,27 @@ export const AdminPage: React.FC<{}> = () => {
 
     return (
         <Flex flexDirection='column' width='100%' alignItems='center'>
+            <Modal isOpen={showStopModal}>
+                <Flex flexDirection='column' m={2}>
+                    <Heading variant='heading3' mb={1}>
+                        Stop the game
+                    </Heading>
+                    <Text variant='body' mb={2}>
+                        You are about to stop the game. Are you sure you want to do this? This game cannot be restored.
+                    </Text>
+                    <Flex justifyContent='flex-end'>
+                        <MButton onClick={stop} variant='hollow' mr={2}>I'm sure</MButton>
+                        <MButton onClick={() => setShowStopModal(false)} variant='primary'>Never Mind</MButton>
+                    </Flex>
+                </Flex>
+            </Modal>
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
                 width='100%'
                 p={2}
             >
-                <MButton variant='icon' onClick={stop}>
+                <MButton variant='icon' onClick={() => setShowStopModal(true)}>
                     <FaBan color={theme.colors.error} size={30} />
                 </MButton>
                 <Text variant='heading2'>
@@ -171,7 +188,7 @@ export const AdminPage: React.FC<{}> = () => {
                     }
                 });
                 return (
-                    <Flex px={2} width='100%' key={participant.id}>
+                    <Flex px={2} width='100%' justifyContent='center' key={participant.id}>
                         <ParticipantBar {...participant} caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'} />
                     </Flex>
                 );

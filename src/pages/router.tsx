@@ -11,7 +11,6 @@ import { QuotesPage } from './quotes';
 
 const duration = 200;
 
-// TODO: Some pages are still flickering
 const TransitionStyle = createGlobalStyle`
 .fade-enter {
     opacity: 0;
