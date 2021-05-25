@@ -9,6 +9,7 @@ import { LoadingBar } from './molecules/loading-bar';
 import { GameProvider } from './service/game/player-context';
 import { VotesProvider } from './service/game/votes-conext';
 import 'react-toastify/dist/ReactToastify.css';
+import { ScoreProvider } from './service/game/scoreboard';
 
 const App: React.FC<{}> = () => (
     <Router>
@@ -19,7 +20,9 @@ const App: React.FC<{}> = () => (
             <AuthProvider>
                 <VotesProvider>
                     <GameProvider>
-                        <PageManager />
+                        <ScoreProvider>
+                            <PageManager />
+                        </ScoreProvider>
                     </GameProvider>
                 </VotesProvider>
             </AuthProvider>

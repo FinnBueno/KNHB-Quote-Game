@@ -6,6 +6,8 @@ type Quote = {
     content: string;
     answer: string;
     id: number;
+    votes: { [key: string]: string };
+    showAnswer?: boolean;
 };
 
 export type Game = {
@@ -56,9 +58,9 @@ export const GameProvider: React.FC<{}> = (props) => {
         activeQuote.once('value', snapshot => {
             const val = snapshot.val();
             if (!val) return;
+            if (!val.votes) return;
 
             Object.keys(val.votes).forEach(key => {
-                if (!val.votes) return;
                 const vote = val.votes[key];
                 if (val.answer === vote) {
                     const newScore = (participants?.find(p => p.id === key)?.score || 0) + 1;

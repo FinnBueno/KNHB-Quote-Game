@@ -50,7 +50,7 @@ z-index: 1;
 overflow: hidden;
 `;
 
-const TOTAL_QUOTES = 7;
+export const TOTAL_QUOTES = 7;
 
 export const QuotesPage: React.FC<{}> = () => {
     const participants = useParticipants();
@@ -103,7 +103,7 @@ export const QuotesPage: React.FC<{}> = () => {
                 ) : (<></>)}
                 {!hasFinished ? (game?.quote ? (
                     <>
-                        <Heading variant='heading3' color='background' textAlign='center'>
+                        <Heading variant='heading1' color='background' textAlign='center' style={{ position: 'absolute', top: 24, left: 0, right: 0 }}>
                             {game.quote.id + 1} / {TOTAL_QUOTES}
                         </Heading>
                         <Heading variant='heading1' color='background' fontSize='64px' textAlign='center'>

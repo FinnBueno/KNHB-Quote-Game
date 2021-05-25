@@ -2,7 +2,7 @@ import React from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
-import { Flex } from 'rebass';
+import { Flex, Text } from 'rebass';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { MButton, ProgressButton } from 'src/atoms';
@@ -12,6 +12,7 @@ import { useGame } from 'src/service/game/player-context';
 import _ from 'lodash';
 import { useParticipants } from 'src/service/game/participants';
 import { useFinished } from 'src/service/game/finished';
+import { TOTAL_QUOTES } from '../quotes';
 
 export const AdminPage: React.FC<{}> = () => {
     const auth = useAuth();
@@ -107,13 +108,13 @@ export const AdminPage: React.FC<{}> = () => {
     }
     return (
         <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+            <Text variant='heading3' mb={2}>
+                {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
+            </Text>
             {game?.quote || hasFinished ? (
                 <Flex width='100%' flexDirection='column'>
-                    <MButton mb={2} variant='primaryLarge' onClick={showAnswer}>
-                        Antwoord
-                    </MButton>
-                    <MButton mb={2} variant='primaryLarge' onClick={next as any}>
-                        Volgende
+                    <MButton mb={2} variant='primaryLarge' onClick={game?.quote?.showAnswer ? next : showAnswer}>
+                        {game?.quote?.showAnswer ? 'Volgende' : 'Antwoord'}
                     </MButton>
                     <MButton variant='primaryLarge' onClick={stop}>
                         Stoppen

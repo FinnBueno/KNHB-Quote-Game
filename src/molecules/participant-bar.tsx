@@ -37,9 +37,16 @@ z-index: 1;
 export const ParticipantBar: React.FC<Participant & { onClick?: (_id: string) => void, disabled?: boolean }> = ({
     onClick, disabled, name, id, picture, caption
 }) => (
-    <TriangleDecoratedFlex variant={disabled ? 'card' : 'cardClickable'} p={2} mb={2} width='100%' maxWidth='350px' opacity={disabled ? .5 : 1} onClick={() => {
-        if (onClick && !disabled) onClick(id);
-    }}>
+    <TriangleDecoratedFlex
+        variant={disabled ? 'cardDisabled' : 'cardClickable'}
+        p={2}
+        mb={2}
+        width='100%'
+        maxWidth='350px'
+        onClick={() => {
+            if (onClick && !disabled) onClick(id);
+        }}
+    >
         <Image src={picture} width='50px' />
         <Flex flexDirection='column' ml={3} justifyContent='center'>
             <Heading variant='heading2'>{name}</Heading>

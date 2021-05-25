@@ -162,14 +162,24 @@ const customTheme = {
         card: {
             bg: 'primary',
             boxShadow: 'rgb(0, 0, 0, .4) 0px 10px 13px -7px, 5px 5px 15px 5px rgba(0,0,0,0)',
-            transition: 'transform .2s',
+            transition: 'transform .2s, opacity .2s',
+            opacity: 1,
             '&:active': {
                 transform: 'translateY(6px)'
-            }
+            },
+            'userSelect': 'none',
         },
         cardClickable: {
             variant: 'variants.card',
             cursor: 'pointer',
+        },
+        cardDisabled: {
+            variant: 'variants.card',
+            cursor: 'default',
+            opacity: .5,
+            '&:active': {
+                transform: 'none',
+            }
         },
         appBarFrame: {
             position: 'fixed',

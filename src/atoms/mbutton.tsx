@@ -42,7 +42,7 @@ position: relative;
  * This is a mobile first button component that displays a special ripple effect, commonly seen on mobile buttons
  * TODO: Make this a progressive button, being able to switch to a loading state through a prop
  */
-export const MButton: React.FC<ButtonProps> = ({ children, onClick, ...rest }) => {
+export const MButton: React.FC<Omit<ButtonProps, 'onClick'> & { onClick: (..._: any) => void }> = ({ children, onClick, ...rest }) => {
 
     const [coords, setCoords] = React.useState({ x: -1, y: -1 });
     const [isRippling, setIsRippling] = React.useState(false);

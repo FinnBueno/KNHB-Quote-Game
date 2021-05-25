@@ -157,7 +157,7 @@
 		"firebase": "^8.3.3",
 		"lodash": "^4.17.15",
 		"react": "^17.0.2",
-		"react-confetti": "^5.0.1",
+		"react-confetti": "^5.1.0",
 		"react-dom": "^17.0.2",
 		"react-helmet": "^6.1.0",
 		"react-hook-form": "^7.0.5",
