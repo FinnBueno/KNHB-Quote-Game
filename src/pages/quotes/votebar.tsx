@@ -40,7 +40,7 @@ const ProgressFlex = styled(Container)`
 
 export const VoteBar: React.FC<Participant & { revealAnswer: boolean, isCorrect: boolean, votes: number, max: number }> = ({ revealAnswer, isCorrect, votes, max, picture }) => (
     <ProgressFlex maxVotes={max} votes={votes} revealAnswer={revealAnswer} flexDirection='column'>
-        {isCorrect ? <FaCheckCircle className='correct' color='#4A8734' size={50} /> : <></>}
+        {isCorrect ? <FaCheckCircle className='correct' color={theme.colors.success} size={50} /> : <></>}
         <Image width='70px' src={picture} />
         <Flex justifyContent='center' alignItems='flex-end'>
             <Text as='p' variant='heading3' color={theme.colors.background}>{votes}</Text>

@@ -5,14 +5,17 @@ import { toast } from 'react-toastify';
 import { Flex, Text } from 'rebass';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import _ from 'lodash';
+import { FaBan, FaCheck, FaArrowRight } from 'react-icons/fa';
 import { MButton, ProgressButton } from 'src/atoms';
 import { useAuth } from 'src/service/auth';
 import { signInWithGoogle } from 'src/service/firebase';
 import { useGame } from 'src/service/game/player-context';
-import _ from 'lodash';
 import { useParticipants } from 'src/service/game/participants';
 import { useFinished } from 'src/service/game/finished';
 import { TOTAL_QUOTES } from '../quotes';
+import { theme } from 'src/service/theme/configuration';
+import { ParticipantBar } from 'src/molecules/participant-bar';
 
 export const AdminPage: React.FC<{}> = () => {
     const auth = useAuth();
@@ -76,11 +79,11 @@ export const AdminPage: React.FC<{}> = () => {
                 { type: 'error' }
             ));
     }
+
     const start = () => {
         // randomize the quotes list
         const quotesRef = firebase.database().ref('quotes');
         quotesRef.once('value').then(snapshot => {
-            console.log(snapshot.val());
             participants?.forEach(({ id }) => firebase.database().ref(`participants/${id}/score`).set(0));
             quotesRef.set(_.shuffle(snapshot.val()))
                 .then(() => {
@@ -92,6 +95,7 @@ export const AdminPage: React.FC<{}> = () => {
                 ));
         });
     }
+
     const showAnswer = () => {
         firebase.database().ref('activeQuote/showAnswer').set(true)
             .then(() => {
@@ -106,28 +110,75 @@ export const AdminPage: React.FC<{}> = () => {
                 { type: 'error' }
             ));
     }
-    return (
-        <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
-            <Text variant='heading3' mb={2}>
-                {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
-            </Text>
-            {game?.quote || hasFinished ? (
-                <Flex width='100%' flexDirection='column'>
-                    <MButton mb={2} variant='primaryLarge' onClick={game?.quote?.showAnswer ? next : showAnswer}>
-                        {game?.quote?.showAnswer ? 'Volgende' : 'Antwoord'}
-                    </MButton>
-                    <MButton variant='primaryLarge' onClick={stop}>
-                        Stoppen
-                    </MButton>
-                </Flex>
-            ) : (
+
+    if (hasFinished) {
+        return (
+            <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+                <Text variant='body' textAlign='center' mb={2}>The game has finished. Click here to reset the database.</Text>
+                <MButton variant='primaryLarge' onClick={stop}>
+                    Stop
+                </MButton>
+            </Flex>
+        );
+    } else if (!game?.quote) {
+        return (
+            <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+                <Text variant='body' textAlign='center' mb={2}>There is no game active. Click here to start.</Text>
                 <MButton variant='primaryLarge' onClick={start}>
                     Start
                 </MButton>
-            )}
+            </Flex>
+        );
+    }
+
+    return (
+        <Flex flexDirection='column' width='100%' alignItems='center'>
+            <Flex
+                justifyContent='space-between'
+                alignItems='center'
+                width='100%'
+                p={2}
+            >
+                <MButton variant='icon' onClick={stop}>
+                    <FaBan color={theme.colors.error} size={30} />
+                </MButton>
+                <Text variant='heading2'>
+                    {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
+                </Text>
+                <MButton variant='icon' onClick={game?.quote?.showAnswer ? next : showAnswer}>
+                    {game?.quote?.showAnswer ? (
+                        <FaArrowRight color={theme.colors.text} size={30} />
+                    ) : (
+                        <FaCheck color={theme.colors.success} size={30} />
+                    )}
+                </MButton>
+            </Flex>
+            <Text variant='body' textAlign='center'>
+                The answer is currently {game?.quote?.showAnswer ? 'visible' : 'not visible'}.
+            </Text>
+            <Text variant='caption' textAlign='center' my={2}>
+                Current votes
+            </Text>
+            {participants?.map(participant => {
+                const gotVotesFrom: string[] = [];
+                Object.keys(game?.quote?.votes || {}).map(voter => {
+                    const votedFor = game?.quote?.votes[voter];
+                    if (votedFor === participant.id) {
+                        // this person voted for this participant, so we show them in the caption
+                        // find their name instead of id
+                        const name = participants.find(p => p.id === voter)?.name;
+                        if (name) gotVotesFrom.push(name);
+                    }
+                });
+                return (
+                    <Flex px={2} width='100%' key={participant.id}>
+                        <ParticipantBar {...participant} caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'} />
+                    </Flex>
+                );
+            })}
             <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
-                Log uit als admin
+                Log out of admin mode
             </MButton>
         </Flex>
-    );
+    )
 }

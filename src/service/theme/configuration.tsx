@@ -10,6 +10,7 @@ const darkTheme = {
     secondary: '#E94F26',
     text: '#2A3A2F',
     error: '#C82D2B',
+    success: '#4A8734',
 };
 
 const colors = darkTheme;
@@ -197,7 +198,7 @@ const customTheme = {
             right: 0,
             height: headerHeight(),
             zIndex: 1000,
-        }
+        },
     }
 }
 

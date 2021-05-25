@@ -123,7 +123,7 @@ export const PlayerPage: React.FC<{}> = () => {
             {/* TODO: There's no subscription for a player's score, and thus it doesn't get updated, fix that */}
             <PlayerHeader place={place || Object.keys(map).length} score={score} pastFirstQuote={(game?.quote?.id || 0) > 0} />
             <Text variant='body' textAlign='center' mb={1}>Wie sprak de woorden...</Text>
-            <QuoteBox mb={3}>{quote.content}</QuoteBox>
+            <QuoteBox width='100%' justifyContent='center' mb={3}>{quote.content}</QuoteBox>
             {participants ? participants.sort((a, b) => {
                 if(a.id < b.id) { return -1; }
                 if(a.id > b.id) { return 1; }
