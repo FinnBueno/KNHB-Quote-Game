@@ -15,7 +15,12 @@ const App: React.FC<{}> = () => (
     <Router>
         <ThemeProvider theme={theme}>
             <GlobalStyle />
-            <ToastContainer position='bottom-right' />
+            <ToastContainer
+                position='bottom-right'
+                autoClose={1750}
+                draggablePercent={50}
+                hideProgressBar
+            />
             <LoadingBar />
             <AuthProvider>
                 <VotesProvider>

@@ -44,7 +44,7 @@ export const GameProvider: React.FC<{}> = (props) => {
                 activeQuoteRef.set({
                     ...snapshot.val(),
                     id: newId
-                }, e => after(!e));
+                }, e => after(e === null));
             } else {
                 // game is over!
                 firebase.database().ref('isGameOver').set(true);

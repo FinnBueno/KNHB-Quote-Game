@@ -11,5 +11,5 @@ export const Modal: React.FC<FlexProps & { isOpen: boolean }> = ({ isOpen, child
                 {children}
             </Flex>
         </Flex>
-    )
+    );
 }

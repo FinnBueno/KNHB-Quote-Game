@@ -139,66 +139,68 @@ export const AdminPage: React.FC<{}> = () => {
 
     return (
         <Flex flexDirection='column' width='100%' alignItems='center'>
-            <Modal isOpen={showStopModal}>
-                <Flex flexDirection='column' m={2}>
-                    <Heading variant='heading3' mb={1}>
-                        Stop the game
-                    </Heading>
-                    <Text variant='body' mb={2}>
-                        You are about to stop the game. Are you sure you want to do this? This game cannot be restored.
-                    </Text>
-                    <Flex justifyContent='flex-end'>
-                        <MButton onClick={stop} variant='hollow' mr={2}>I'm sure</MButton>
-                        <MButton onClick={() => setShowStopModal(false)} variant='primary'>Never Mind</MButton>
+            <Flex flexDirection='column' width='100%' maxWidth='600px'>
+                <Modal isOpen={showStopModal}>
+                    <Flex flexDirection='column' m={2}>
+                        <Heading variant='heading3' mb={1}>
+                            Stop the game
+                        </Heading>
+                        <Text variant='body' mb={2}>
+                            You are about to stop the game. Are you sure you want to do this? This game cannot be restored.
+                        </Text>
+                        <Flex justifyContent='flex-end'>
+                            <MButton onClick={stop} variant='hollow' mr={2}>I'm sure</MButton>
+                            <MButton onClick={() => setShowStopModal(false)} variant='primary'>Never Mind</MButton>
+                        </Flex>
                     </Flex>
+                </Modal>
+                <Flex
+                    justifyContent='space-between'
+                    alignItems='center'
+                    width='100%'
+                    p={2}
+                >
+                    <MButton variant='icon' onClick={() => setShowStopModal(true)}>
+                        <FaBan color={theme.colors.error} size={30} />
+                    </MButton>
+                    <Text variant='heading2'>
+                        {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
+                    </Text>
+                    <MButton variant='icon' onClick={game?.quote?.showAnswer ? () => next() : showAnswer}>
+                        {game?.quote?.showAnswer ? (
+                            <FaArrowRight color={theme.colors.text} size={30} />
+                        ) : (
+                            <FaCheck color={theme.colors.success} size={30} />
+                        )}
+                    </MButton>
                 </Flex>
-            </Modal>
-            <Flex
-                justifyContent='space-between'
-                alignItems='center'
-                width='100%'
-                p={2}
-            >
-                <MButton variant='icon' onClick={() => setShowStopModal(true)}>
-                    <FaBan color={theme.colors.error} size={30} />
-                </MButton>
-                <Text variant='heading2'>
-                    {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
+                <Text variant='body' textAlign='center'>
+                    The answer is currently {game?.quote?.showAnswer ? 'visible' : 'not visible'}.
                 </Text>
-                <MButton variant='icon' onClick={game?.quote?.showAnswer ? next : showAnswer}>
-                    {game?.quote?.showAnswer ? (
-                        <FaArrowRight color={theme.colors.text} size={30} />
-                    ) : (
-                        <FaCheck color={theme.colors.success} size={30} />
-                    )}
+                <Text variant='caption' textAlign='center' my={2}>
+                    Current votes
+                </Text>
+                {participants?.map(participant => {
+                    const gotVotesFrom: string[] = [];
+                    Object.keys(game?.quote?.votes || {}).map(voter => {
+                        const votedFor = game?.quote?.votes[voter];
+                        if (votedFor === participant.id) {
+                            // this person voted for this participant, so we show them in the caption
+                            // find their name instead of id
+                            const name = participants.find(p => p.id === voter)?.name;
+                            if (name) gotVotesFrom.push(name);
+                        }
+                    });
+                    return (
+                        <Flex px={2} width='100%' justifyContent='center' key={participant.id}>
+                            <ParticipantBar {...participant} caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'} />
+                        </Flex>
+                    );
+                })}
+                <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
+                    Log out of admin mode
                 </MButton>
             </Flex>
-            <Text variant='body' textAlign='center'>
-                The answer is currently {game?.quote?.showAnswer ? 'visible' : 'not visible'}.
-            </Text>
-            <Text variant='caption' textAlign='center' my={2}>
-                Current votes
-            </Text>
-            {participants?.map(participant => {
-                const gotVotesFrom: string[] = [];
-                Object.keys(game?.quote?.votes || {}).map(voter => {
-                    const votedFor = game?.quote?.votes[voter];
-                    if (votedFor === participant.id) {
-                        // this person voted for this participant, so we show them in the caption
-                        // find their name instead of id
-                        const name = participants.find(p => p.id === voter)?.name;
-                        if (name) gotVotesFrom.push(name);
-                    }
-                });
-                return (
-                    <Flex px={2} width='100%' justifyContent='center' key={participant.id}>
-                        <ParticipantBar {...participant} caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'} />
-                    </Flex>
-                );
-            })}
-            <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
-                Log out of admin mode
-            </MButton>
         </Flex>
     )
 }
