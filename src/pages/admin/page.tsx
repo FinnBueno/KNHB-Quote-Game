@@ -130,6 +130,9 @@ export const AdminPage: React.FC<{}> = () => {
                 <MButton variant='primaryLarge' onClick={start}>
                     Start
                 </MButton>
+                <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
+                    Log out of admin mode
+                </MButton>
             </Flex>
         );
     }
