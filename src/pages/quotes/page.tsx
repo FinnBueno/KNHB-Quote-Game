@@ -50,7 +50,7 @@ z-index: 1;
 overflow: hidden;
 `;
 
-export const TOTAL_QUOTES = 7;
+export const TOTAL_QUOTES = 161;
 
 export const QuotesPage: React.FC<{}> = () => {
     const participants = useParticipants();
