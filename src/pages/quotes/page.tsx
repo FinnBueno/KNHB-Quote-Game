@@ -120,7 +120,7 @@ export const QuotesPage: React.FC<{}> = () => {
                         }}>
                             {participants?.map(participant => (
                                 <Flex mx={3}>
-                                    <VoteBar revealAnswer={revealAnswer} isCorrect={participant.id === game.quote?.answer} key={participant.id} {...participant} votes={votes[participant.id] || 0} max={max} />
+                                    <VoteBar revealAnswer={revealAnswer} isCorrect={participant.id === game.quote?.answer.toLowerCase()} key={participant.id} {...participant} votes={votes[participant.id] || 0} max={max} />
                                 </Flex>
                             ))}
                         </Flex>
