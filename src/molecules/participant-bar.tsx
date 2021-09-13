@@ -34,8 +34,8 @@ z-index: 1;
 }
 `;
 
-export const ParticipantBar: React.FC<Participant & { onClick?: (_id: string) => void, disabled?: boolean }> = ({
-    onClick, disabled, name, id, picture, caption
+export const ParticipantBar: React.FC<Participant & { onClick?: (_id: string) => void, disabled?: boolean, side?: () => React.ReactNode }> = ({
+    onClick, disabled, name, id, picture, caption, side,
 }) => (
     <TriangleDecoratedFlex
         variant={disabled ? 'cardDisabled' : 'cardClickable'}
@@ -47,10 +47,13 @@ export const ParticipantBar: React.FC<Participant & { onClick?: (_id: string) =>
             if (onClick && !disabled) onClick(id);
         }}
     >
-        <Image src={picture} width='50px' />
-        <Flex flexDirection='column' ml={3} justifyContent='center'>
-            <Heading variant='heading2'>{name}</Heading>
-            <Text variant='caption'>{caption}</Text>
+        <Image src={picture} width='60px' />
+        <Flex flexDirection='row' justifyContent='space-between' width='100%' alignItems='center'>
+            <Flex flexDirection='column' ml={2} justifyContent='center'>
+                <Heading variant='heading2'>{name}</Heading>
+                <Text variant='caption'>{caption}</Text>
+            </Flex>
+            {side ? side() : <></>}
         </Flex>
     </TriangleDecoratedFlex>
 )

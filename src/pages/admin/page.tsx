@@ -6,7 +6,7 @@ import { Flex, Heading, Text } from 'rebass';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import _ from 'lodash';
-import { FaBan, FaCheck, FaArrowRight } from 'react-icons/fa';
+import { FaBan, FaCheck, FaArrowRight, FaCheckCircle } from 'react-icons/fa';
 import { MButton, ProgressButton } from 'src/atoms';
 import { useAuth } from 'src/service/auth';
 import { signInWithGoogle } from 'src/service/firebase';
@@ -191,9 +191,18 @@ export const AdminPage: React.FC<{}> = () => {
                             if (name) gotVotesFrom.push(name);
                         }
                     });
+                    const isCorrect = game?.quote?.answer.toLowerCase() === participant.id;
                     return (
                         <Flex px={2} width='100%' justifyContent='center' key={participant.id}>
-                            <ParticipantBar {...participant} caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'} />
+                            <ParticipantBar
+                                {...participant}
+                                caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'}
+                                side={isCorrect ? () => (
+                                    <Flex mr={1}>
+                                        <FaCheckCircle color={theme.colors.success} size={26} />
+                                    </Flex>
+                                ) : undefined}
+                            />
                         </Flex>
                     );
                 })}

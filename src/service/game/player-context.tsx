@@ -40,6 +40,7 @@ export const GameProvider: React.FC<{}> = (props) => {
         const newId = quote ? (quote.id + 1) : 0;
         firebase.database().ref(`quotes/${newId}`).once('value', snapshot => {
             if (snapshot.exists()) {
+                
                 firebase.database().ref('isGameOver').set(false);
                 activeQuoteRef.set({
                     ...snapshot.val(),
@@ -62,7 +63,7 @@ export const GameProvider: React.FC<{}> = (props) => {
 
             Object.keys(val.votes).forEach(key => {
                 const vote = val.votes[key];
-                if (val.answer === vote) {
+                if (val.answer.toLowerCase() === vote) {
                     const newScore = (participants?.find(p => p.id === key)?.score || 0) + 1;
                     firebase.database().ref(`participants/${key}/score`).set(newScore);
                 }
