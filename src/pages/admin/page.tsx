@@ -13,10 +13,10 @@ import { signInWithGoogle } from 'src/service/firebase';
 import { useGame } from 'src/service/game/player-context';
 import { useParticipants } from 'src/service/game/participants';
 import { useFinished } from 'src/service/game/finished';
-import { TOTAL_QUOTES } from '../quotes';
 import { theme } from 'src/service/theme/configuration';
 import { ParticipantBar } from 'src/molecules/participant-bar';
 import { Modal } from 'src/atoms/modal';
+import { useTotalQuotes } from 'src/service/game/get-total-quotes';
 
 export const AdminPage: React.FC<{}> = () => {
     const auth = useAuth();
@@ -25,6 +25,7 @@ export const AdminPage: React.FC<{}> = () => {
     const history = useHistory();
     const hasFinished = useFinished();
     const [showStopModal, setShowStopModal] = useState(false);
+    const totalQuotes = useTotalQuotes();
     const backToStart = () => history.push('/');
 
     if (!auth?.admin.isAdmin && !auth?.admin.loading) {
@@ -164,7 +165,7 @@ export const AdminPage: React.FC<{}> = () => {
                         <FaBan color={theme.colors.error} size={30} />
                     </MButton>
                     <Text variant='heading2'>
-                        {(game?.quote?.id || 0) + 1} / {TOTAL_QUOTES}
+                        {(game?.quote?.id || 0) + 1} / {totalQuotes}
                     </Text>
                     <MButton variant='icon' onClick={game?.quote?.showAnswer ? () => next() : showAnswer}>
                         {game?.quote?.showAnswer ? (

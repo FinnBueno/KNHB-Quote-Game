@@ -16,6 +16,10 @@
       ".read": true,
       ".write": "auth.uid === 'vw6VpZ4rpSXBka5DkQ5J5j5XPnI3'"
     },
+    "totalQuotes": {
+      ".read": true,
+      ".write": false
+    },
     "activeQuote": {
       ".read": true,
 	    ".write": "auth.uid === 'vw6VpZ4rpSXBka5DkQ5J5j5XPnI3'",

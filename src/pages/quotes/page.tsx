@@ -3,6 +3,7 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Flex, Heading, Text } from 'rebass';
 import { useFinished } from 'src/service/game/finished';
+import { useTotalQuotes } from 'src/service/game/get-total-quotes';
 import { Participant, useParticipants } from 'src/service/game/participants';
 import { useGame } from 'src/service/game/player-context';
 import { useVotes } from 'src/service/game/votes-conext';
@@ -50,14 +51,13 @@ z-index: 1;
 overflow: hidden;
 `;
 
-export const TOTAL_QUOTES = 161;
-
 export const QuotesPage: React.FC<{}> = () => {
     const participants = useParticipants();
     const votes = useVotes();
     const game = useGame();
     const [revealAnswer, setRevealAnswer] = useState(false);
     const hasFinished = useFinished();
+    const totalQuotes = useTotalQuotes();
     const max = (participants?.length || 2) - 1;
 
     const highest = participants?.reduce((prvs: Participant | undefined, crnt: Participant) => {
@@ -104,7 +104,7 @@ export const QuotesPage: React.FC<{}> = () => {
                 {!hasFinished ? (game?.quote ? (
                     <>
                         <Heading variant='heading1' color='background' textAlign='center' style={{ position: 'absolute', top: 24, left: 0, right: 0 }}>
-                            {game.quote.id + 1} / {TOTAL_QUOTES}
+                            {game.quote.id + 1} / {totalQuotes}
                         </Heading>
                         <Heading variant='heading1' color='background' fontSize='64px' textAlign='center'>
                             {game?.quote.content}
