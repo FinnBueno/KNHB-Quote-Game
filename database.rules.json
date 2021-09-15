@@ -20,6 +20,10 @@
       ".read": true,
       ".write": false
     },
+    "updateQuotes": {
+      ".read": "auth.uid === 'vw6VpZ4rpSXBka5DkQ5J5j5XPnI3'",
+      ".write": "auth.uid === 'vw6VpZ4rpSXBka5DkQ5J5j5XPnI3'"
+    },
     "activeQuote": {
       ".read": true,
 	    ".write": "auth.uid === 'vw6VpZ4rpSXBka5DkQ5J5j5XPnI3'",

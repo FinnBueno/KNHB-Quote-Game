@@ -118,7 +118,7 @@ export const AdminPage: React.FC<{}> = () => {
     if (hasFinished) {
         return (
             <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
-                <Text variant='body' textAlign='center' mb={2}>The game has finished. Click here to reset the database.</Text>
+                <Text variant='body' textAlign='center' mb={2}>The game has finished. Click here to start over.</Text>
                 <MButton variant='primaryLarge' onClick={stop}>
                     Stop
                 </MButton>
@@ -126,14 +126,21 @@ export const AdminPage: React.FC<{}> = () => {
         );
     } else if (!game?.quote) {
         return (
-            <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
-                <Text variant='body' textAlign='center' mb={2}>There is no game active. Click here to start.</Text>
-                <MButton variant='primaryLarge' onClick={start}>
-                    Start
-                </MButton>
-                <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
-                    Log out of admin mode
-                </MButton>
+            <Flex m={2} alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+                <Flex maxWidth='300px' width='100%' flexDirection='column'>
+                    <Text variant='body' textAlign='center' mb={2}>There is no game active. Click here to start.</Text>
+                    <MButton variant='primaryLarge' onClick={start} width='100%'>
+                        Start
+                    </MButton>
+                    <Flex justifyContent='space-between' width='100%' pt={1}>
+                        <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
+                            Log out
+                        </MButton>
+                        <MButton variant='link' mt={2} onClick={() => history.push('/settings')}>
+                            Settings
+                        </MButton>
+                    </Flex>
+                </Flex>
             </Flex>
         );
     }
@@ -207,9 +214,16 @@ export const AdminPage: React.FC<{}> = () => {
                         </Flex>
                     );
                 })}
-                <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
-                    Log out of admin mode
-                </MButton>
+                <Flex justifyContent='center' width='100%' pt={1}>
+                    <Flex maxWidth='350px' justifyContent='space-between' width='100%'>
+                        <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
+                            Log out
+                        </MButton>
+                        <MButton variant='link' mt={2} onClick={() => history.push('/settings')}>
+                            Settings
+                        </MButton>
+                    </Flex>
+                </Flex>
             </Flex>
         </Flex>
     )

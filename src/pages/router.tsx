@@ -5,6 +5,7 @@ import { AuthenticatedRoute, UnauthenticatedRoute } from 'src/service/auth';
 import { PlayerPage } from './player';
 import { StartPage } from './start';
 import { AdminPage } from './admin';
+import { SettingsPage } from './settings';
 import { QuotesPage } from './quotes';
 
 export const PageManager: React.FC<{}> = () => {
@@ -14,6 +15,7 @@ export const PageManager: React.FC<{}> = () => {
             <Flex flexDirection='column' width='100%' height='auto' minHeight='100%'>
                 <Switch location={location}>
                     <Route path='/admin' component={AdminPage} />
+                    <Route path='/settings' component={SettingsPage} />
                     <Route path='/quotes' component={QuotesPage} />
                     <AuthenticatedRoute path='/game' component={PlayerPage} />
                     <UnauthenticatedRoute path='/' component={StartPage} />
