@@ -32,8 +32,6 @@ export default defineConfig([
       jest: true,
     },
 
-    ignorePatterns: ["serviceWorker.ts"],
-
     rules: {
       "no-param-reassign": "off",
       "@import/no-unresolved": "off",
