@@ -40,24 +40,24 @@ opacity: 1;
 
 // TODO: Find out how to track any promise, no matter the label
 export const LoadingBar = () => {
-    const { promiseInProgress } = usePromiseTracker();
+  const { promiseInProgress } = usePromiseTracker();
 
-    if (!promiseInProgress) return (<></>);
+  if (!promiseInProgress) return (<></>);
 
-    return (
-        <Box style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            width: '100%',
-            overflowX: 'hidden',
-            height: '5px',
-            zIndex: 10000
-        }}>
-            <Line />
-            <Inc />
-            <Dec />
-        </Box>
-    );
+  return (
+    <Box style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      width: '100%',
+      overflowX: 'hidden',
+      height: '5px',
+      zIndex: 10000
+    }}>
+      <Line />
+      <Inc />
+      <Dec />
+    </Box>
+  );
 };

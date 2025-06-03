@@ -35,25 +35,25 @@ z-index: 1;
 `;
 
 export const ParticipantBar: React.FC<Participant & { onClick?: (_id: string) => void, disabled?: boolean, side?: () => React.ReactNode }> = ({
-    onClick, disabled, name, id, picture, caption, side,
+  onClick, disabled, name, id, picture, caption, side,
 }) => (
-    <TriangleDecoratedFlex
-        variant={disabled ? 'cardDisabled' : 'cardClickable'}
-        p={2}
-        mb={2}
-        width='100%'
-        maxWidth='350px'
-        onClick={() => {
-            if (onClick && !disabled) onClick(id);
-        }}
-    >
-        <Image src={picture} width='60px' />
-        <Flex flexDirection='row' justifyContent='space-between' width='100%' alignItems='center'>
-            <Flex flexDirection='column' ml={2} justifyContent='center'>
-                <Heading variant='heading2'>{name}</Heading>
-                <Text variant='caption'>{caption}</Text>
-            </Flex>
-            {side ? side() : <></>}
-        </Flex>
-    </TriangleDecoratedFlex>
-)
+  <TriangleDecoratedFlex
+    variant={disabled ? 'cardDisabled' : 'cardClickable'}
+    p={2}
+    mb={2}
+    width='100%'
+    maxWidth='350px'
+    onClick={() => {
+      if (onClick && !disabled) onClick(id);
+    }}
+  >
+    <Image src={picture} width='60px' />
+    <Flex flexDirection='row' justifyContent='space-between' width='100%' alignItems='center'>
+      <Flex flexDirection='column' ml={2} justifyContent='center'>
+        <Heading variant='heading2'>{name}</Heading>
+        <Text variant='caption'>{caption}</Text>
+      </Flex>
+      {side ? side() : <></>}
+    </Flex>
+  </TriangleDecoratedFlex>
+);

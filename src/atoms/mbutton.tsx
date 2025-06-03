@@ -38,47 +38,48 @@ position: relative;
 }
 `;
 
+export type MobileButtonProps = Omit<ButtonProps, 'onClick'> & { onClick?: (..._: any) => void };
+
 /**
  * This is a mobile first button component that displays a special ripple effect, commonly seen on mobile buttons
  * TODO: Make this a progressive button, being able to switch to a loading state through a prop
  */
-export const MButton: React.FC<Omit<ButtonProps, 'onClick'> & { onClick: (..._: any) => void }> = ({ children, onClick, ...rest }) => {
+export const MButton: React.FC<MobileButtonProps> = ({ children, ...rest }) => {
 
-    const [coords, setCoords] = React.useState({ x: -1, y: -1 });
-    const [isRippling, setIsRippling] = React.useState(false);
+  const [coords, setCoords] = React.useState({ x: -1, y: -1 });
+  const [isRippling, setIsRippling] = React.useState(false);
 
-    React.useEffect(() => {
-        if (coords.x !== -1 && coords.y !== -1) {
-            setIsRippling(true);
-            setTimeout(() => setIsRippling(false), 300);
-        } else setIsRippling(false);
-    }, [coords]);
+  React.useEffect(() => {
+    if (coords.x !== -1 && coords.y !== -1) {
+      setIsRippling(true);
+      setTimeout(() => setIsRippling(false), 300);
+    } else setIsRippling(false);
+  }, [coords]);
 
-    React.useEffect(() => {
-        if (!isRippling) setCoords({ x: -1, y: -1 });
-    }, [isRippling]);
+  React.useEffect(() => {
+    if (!isRippling) setCoords({ x: -1, y: -1 });
+  }, [isRippling]);
 
-    return (
-        <RippleButton
-            {...rest}
-            onClick={(e: any) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-                onClick && onClick(e);
-            }}
-        >
-            {isRippling ? (
-                <span
-                    className="ripple"
-                    style={{
-                        left: coords.x,
-                        top: coords.y
-                    }}
-                />
-            ) : (
-                ''
-            )}
-            <span className="content">{children}</span>
-        </RippleButton>
-    )
-}
+  return (
+    <RippleButton
+      {...rest}
+      onMouseUp={(e: any) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      }}
+    >
+      {isRippling ? (
+        <span
+          className='ripple'
+          style={{
+            left: coords.x,
+            top: coords.y
+          }}
+        />
+      ) : (
+        ''
+      )}
+      <span className='content'>{children}</span>
+    </RippleButton>
+  );
+};

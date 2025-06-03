@@ -1,14 +1,15 @@
 import React from "react";
-import { ButtonProps } from "rebass";
 import { LoadingIndicator } from "./loading";
-import { MButton } from "./mbutton";
+import { MButton, MobileButtonProps } from "./mbutton";
 
-export const ProgressButton: React.FC<Omit<ButtonProps, 'onClick'> & { onClick: (..._: any) => void, scope: string }> = ({ children, scope, ...rest }) => {
-    return (
-        <MButton {...rest}>
-    		<LoadingIndicator scope={scope}>
-	    		{children}
-		    </LoadingIndicator>
-        </MButton>
-    )
-}
+type ProgressButtonProps = MobileButtonProps & { scope: string };
+
+export const ProgressButton: React.FC<ProgressButtonProps> = ({ children, scope, ...rest }) => {
+  return (
+    <MButton {...rest}>
+      <LoadingIndicator scope={scope}>
+        {children}
+      </LoadingIndicator>
+    </MButton>
+  );
+};

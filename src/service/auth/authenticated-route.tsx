@@ -6,19 +6,19 @@ import { useAuth } from './context';
  * This route only works if the user is authenticated
  */
 export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = (props) => {
-    const auth = useAuth();
+  const auth = useAuth();
 
-    return !!auth?.user ? (
-        <Route
-            path={props.path}
-            component={props.component}
-        />
-    ) : (
-        <Redirect to='/' />
-    );
+  return !!auth?.user ? (
+    <Route
+      path={props.path}
+      component={props.component}
+    />
+  ) : (
+    <Redirect to='/' />
+  );
 };
 
 interface AuthenticatedRouteProps {
-    path: string;
-    component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+  path: string;
+  component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 }

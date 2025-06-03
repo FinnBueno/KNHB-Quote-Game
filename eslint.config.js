@@ -2,12 +2,12 @@ import tseslint from "typescript-eslint";
 import tsparser from "@typescript-eslint/parser";
 import stylistic from "@stylistic/eslint-plugin";
 import react from "eslint-plugin-react";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
+  globalIgnores(["build/"]),
+  tseslint.configs.recommended,
   {
-    extends: ["plugin:@typescript-eslint/recommended"],
-
     files: ["**/*.{ts,tsx,js}"],
 
     languageOptions: {
@@ -16,7 +16,7 @@ export default defineConfig([
       parserOptions: {
         tsconfigRootDir: import.meta.dirname,
         projectService: {
-          allowDefaultProject: ["*.js"],
+          allowDefaultProject: ["*.{ts,js}"],
         },
       },
     },
@@ -25,11 +25,6 @@ export default defineConfig([
       react,
       "@typescript-eslint": tseslint.plugin,
       "@stylistic": stylistic,
-    },
-
-    env: {
-      browser: true,
-      jest: true,
     },
 
     rules: {
@@ -45,22 +40,13 @@ export default defineConfig([
           accessibility: "no-public",
         },
       ],
-      "@typescript-eslint/indent": ["error", 4],
+      "@stylistic/indent": ["error", 2],
+      "@stylistic/jsx-quotes": ["error", "prefer-single"],
+      "@stylistic/semi": "error",
+      "@stylistic/no-trailing-spaces": "warn",
       "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/no-var-requires": "off",
-      "@typescript-eslint/ban-types": [
-        "error",
-        {
-          extendDefaults: true,
-          types: {
-            String: {
-              message: "Use string instead",
-              fixWith: "string",
-            },
-            "{}": false,
-          },
-        },
-      ],
+      "@typescript-eslint/no-empty-object-type": "off",
       "react/jsx-one-expression-per-line": "off",
       "comma-dangle": "off",
       indent: "off",

@@ -10,29 +10,32 @@ import { GameProvider } from './service/game/player-context';
 import { VotesProvider } from './service/game/votes-conext';
 import 'react-toastify/dist/ReactToastify.css';
 import { ScoreProvider } from './service/game/scoreboard';
+import { AvailableGamesProvider } from 'src/service/game/use-list-available-games';
 
 const App: React.FC<{}> = () => (
-    <Router>
-        <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <ToastContainer
-                position='bottom-right'
-                autoClose={1750}
-                draggablePercent={50}
-                hideProgressBar
-            />
-            <LoadingBar />
-            <AuthProvider>
-                <VotesProvider>
-                    <GameProvider>
-                        <ScoreProvider>
-                            <PageManager />
-                        </ScoreProvider>
-                    </GameProvider>
-                </VotesProvider>
-            </AuthProvider>
-        </ThemeProvider>
-    </Router>
+  <Router>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <ToastContainer
+        position='bottom-right'
+        autoClose={1750}
+        draggablePercent={50}
+        hideProgressBar
+      />
+      <LoadingBar />
+      <AvailableGamesProvider>
+        <AuthProvider>
+          <VotesProvider>
+            <GameProvider>
+              <ScoreProvider>
+                <PageManager />
+              </ScoreProvider>
+            </GameProvider>
+          </VotesProvider>
+        </AuthProvider>
+      </AvailableGamesProvider>
+    </ThemeProvider>
+  </Router>
 );
 
 export default App;

@@ -9,18 +9,18 @@ import { SettingsPage } from './settings';
 import { QuotesPage } from './quotes';
 
 export const PageManager: React.FC<{}> = () => {
-    const location = useLocation();
-    return (
-        <Flex justifyContent='center' width='100%' height='auto' minHeight='100%'>
-            <Flex flexDirection='column' width='100%' height='auto' minHeight='100%'>
-                <Switch location={location}>
-                    <Route path='/admin' component={AdminPage} />
-                    <Route path='/settings' component={SettingsPage} />
-                    <Route path='/quotes' component={QuotesPage} />
-                    <AuthenticatedRoute path='/game' component={PlayerPage} />
-                    <UnauthenticatedRoute path='/' component={StartPage} />
-                </Switch>
-            </Flex>
-        </Flex>
-    );
+  const location = useLocation();
+  return (
+    <Flex justifyContent='center' width='100%' height='auto' minHeight='100%'>
+      <Flex flexDirection='column' width='100%' height='auto' minHeight='100%'>
+        <Switch location={location}>
+          <Route path='/admin' component={AdminPage} />
+          <Route path='/settings' component={SettingsPage} />
+          <Route path='/quotes' component={QuotesPage} />
+          <AuthenticatedRoute path='/game' component={PlayerPage} />
+          <UnauthenticatedRoute path='/' component={StartPage} />
+        </Switch>
+      </Flex>
+    </Flex>
+  );
 };

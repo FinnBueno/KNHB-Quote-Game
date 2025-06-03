@@ -12,6 +12,10 @@ export default defineConfig({
     alias: [{ find: "src", replacement: "/src/" }],
   },
 
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+  },
+
   server: {
     open: true,
     port: 3000,
