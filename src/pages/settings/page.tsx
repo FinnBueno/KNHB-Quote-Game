@@ -34,7 +34,7 @@ export const SettingsPage: React.FC<{}> = () => {
     }
   };
 
-  if (!auth?.admin.isAdmin && !auth?.admin.loading) {
+  if (!auth?.admin.gameId && !auth?.admin.loading) {
     history.push('/admin');
     return (
       <></>

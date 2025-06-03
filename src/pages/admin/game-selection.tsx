@@ -5,12 +5,12 @@ import { trackPromise } from "react-promise-tracker";
 import { Flex, Heading, Text } from "rebass";
 import { MButton, ProgressButton } from "src/atoms";
 import { Modal } from "src/atoms/modal";
-import { signInAsGameMaster, signInWithGoogle } from "src/service/firebase";
+import { signInAsGameMaster } from "src/service/firebase";
 import { useListOfAvailableGames } from "src/service/game/use-list-available-games";
 
 type PasswordFormData = { password: string };
 
-export const AvailableGamesOverview: React.FC<{}> = () => {
+export const GameSelectionOverview: React.FC<{}> = () => {
   const availableGames = useListOfAvailableGames();
   const [selectedGameId, setSelectedGameId] = useState<typeof availableGames[0]['identifier']>();
 
@@ -28,7 +28,6 @@ export const AvailableGamesOverview: React.FC<{}> = () => {
             });
           }
         }),
-      // new Promise((resolve) => setTimeout(resolve, 2000)),
       'sign-in'
     );
   };

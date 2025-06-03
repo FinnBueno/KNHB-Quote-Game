@@ -5,7 +5,7 @@ import { Flex, Heading, Text } from 'rebass';
 import { useFinished } from 'src/service/game/finished';
 import { useTotalQuotes } from 'src/service/game/get-total-quotes';
 import { Participant, useParticipants } from 'src/service/game/participants';
-import { useGame } from 'src/service/game/player-context';
+import { useGame } from 'src/service/game/game-context';
 import { useVotes } from 'src/service/game/votes-conext';
 import { theme } from 'src/service/theme/configuration';
 import styled from 'styled-components';

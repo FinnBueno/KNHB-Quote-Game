@@ -8,8 +8,9 @@ export type Auth = {
   admin: {
     loading?: boolean;
     error?: boolean;
-    isAdmin?: boolean;
+    gameId?: string;
     setLoading: (_: boolean) => void;
+    getGameRef: (_: string) => firebase.database.Reference;
   }
   loading: boolean;
   error?: boolean;
@@ -17,7 +18,15 @@ export type Auth = {
   setParticipant: (_?: string) => void;
 } | undefined;
 
-const DEFAULT_AUTH: Auth = { admin: { setLoading: _ => {} }, loading: true, user: undefined, setParticipant: () => {} };
+const DEFAULT_AUTH: Auth = {
+  admin: {
+    setLoading: _ => {},
+    getGameRef: _ => { throw new Error('No ref can be created without being signed in as admin'); }
+  },
+  loading: true,
+  user: undefined,
+  setParticipant: () => {}
+};
 
 export const AuthContext = React.createContext<Auth>(DEFAULT_AUTH);
 
@@ -29,7 +38,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const [isAdmin, setAdmin] = useState<boolean>(false);
+  const [adminId, setAdminId] = useState<string | undefined>();
   const [adminLoading, setAdminLoading] = useState(true);
   const [adminError, setAdminError] = useState(false);
 
@@ -48,7 +57,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
   };
 
   const authStateChanged = (user: firebase.User | null) => {
-    setAdmin(!!user);
+    setAdminId(user?.email ? user?.email?.split('@')[0] : undefined);
     setAdminLoading(false);
   };
 
@@ -73,13 +82,15 @@ export const AuthProvider: React.FC<{}> = (props) => {
         },
         loading,
         error,
-        admin: isAdmin ? {
+        admin: adminId ? {
           loading: adminLoading,
           error: adminError,
-          isAdmin,
+          gameId: adminId,
           setLoading: () => setAdminLoading(true),
+          getGameRef: (path: string) => firebase.database().ref(`${adminId}/${path}`)
         } : {
           setLoading: () => setAdminLoading(true),
+          getGameRef: (_: string) => { throw new Error('No ref can be created without being signed in as admin'); }
         },
       }}
     >

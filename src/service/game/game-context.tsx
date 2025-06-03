@@ -14,10 +14,10 @@ export type Game = {
   quote?: Quote;
   persistAnswers: () => void;
   vote: (_id: string, _voter: string) => void;
-  next: (_after: (_success: boolean) => void) => void;
+  next: () => Promise<void>;
 } | undefined;
 
-export const GameContext = React.createContext<Game>({ persistAnswers: () => {}, vote: () => {}, next: () => {} });
+export const GameContext = React.createContext<Game>({ persistAnswers: () => {}, vote: () => {}, next: async () => {} });
 
 export const GameProvider: React.FC<{}> = (props) => {
 
@@ -35,22 +35,24 @@ export const GameProvider: React.FC<{}> = (props) => {
 
   const vote = (id: string, voter: string) => firebase.database().ref(`activeQuote/votes/${voter}`).set(id);
 
-  const next = (after: (_success: boolean) => void) => {
-    const activeQuoteRef = firebase.database().ref(`activeQuote`);
-    const newId = quote ? (quote.id + 1) : 0;
-    firebase.database().ref(`quotes/${newId}`).once('value', snapshot => {
-      if (snapshot.exists()) {
+  const next = () => {
+    return new Promise<void>((resolve, reject) => {
+      const activeQuoteRef = firebase.database().ref(`activeQuote`);
+      const newId = quote ? (quote.id + 1) : 0;
+      firebase.database().ref(`quotes/${newId}`).once('value', snapshot => {
+        if (snapshot.exists()) {
 
-        firebase.database().ref('isGameOver').set(false);
-        activeQuoteRef.set({
-          ...snapshot.val(),
-          id: newId
-        }, e => after(e === null));
-      } else {
-        // game is over!
-        firebase.database().ref('isGameOver').set(true);
-        activeQuoteRef.remove();
-      }
+          firebase.database().ref('isGameOver').set(false);
+          activeQuoteRef.set({
+            ...snapshot.val(),
+            id: newId
+          }, error => error === null ? resolve() : reject());
+        } else {
+          // game is over!
+          firebase.database().ref('isGameOver').set(true);
+          activeQuoteRef.remove();
+        }
+      });
     });
   };
 

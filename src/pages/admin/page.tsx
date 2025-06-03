@@ -5,17 +5,26 @@ import { Flex, Heading, Text } from 'rebass';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import _ from 'lodash';
-import { FaBan, FaCheck, FaArrowRight, FaCheckCircle } from 'react-icons/fa';
+import { FaBan, FaCheck, FaArrowRight } from 'react-icons/fa';
 import { MButton } from 'src/atoms';
 import { useAuth } from 'src/service/auth';
-import { useGame } from 'src/service/game/player-context';
+import { useGame } from 'src/service/game/game-context';
 import { useParticipants } from 'src/service/game/participants';
 import { useFinished } from 'src/service/game/finished';
 import { theme } from 'src/service/theme/configuration';
 import { ParticipantBar } from 'src/molecules/participant-bar';
 import { Modal } from 'src/atoms/modal';
 import { useTotalQuotes } from 'src/service/game/get-total-quotes';
-import { AvailableGamesOverview } from 'src/organisms/available-games-box';
+import { GameSelectionOverview } from 'src/pages/admin/game-selection';
+import { FinishedGame } from 'src/pages/admin/finished';
+import { UnstartedGame } from 'src/pages/admin/game-unstarted';
+
+const handleNoPermission = (action: Promise<unknown>) => {
+  return action.catch(() => toast(
+    'Je hebt geen toestemming om dit te doen.',
+    { type: 'error' }
+  ));
+};
 
 export const AdminPage: React.FC<{}> = () => {
   const auth = useAuth();
@@ -30,36 +39,16 @@ export const AdminPage: React.FC<{}> = () => {
   // this page refreshes a bunch of times due to the many hooks
   // it'd be preferable to make sure that none of the rendering happens before ALL required data has finished fetching
 
-  if (!auth?.admin.isAdmin && !auth?.admin.loading) {
+  if (!auth?.admin.gameId && !auth?.admin.loading) {
     return (
-      <AvailableGamesOverview />
+      <GameSelectionOverview />
     );
   }
 
   const next = (message?: string) => {
-    game?.next(
-      success => {
-        if (success) {
-          toast(
-            message || 'Nieuwe quote geselecteerd.',
-            { type: 'success' }
-          );
-        } else {
-          toast(
-            'Je hebt geen toestemming om dit te doen.',
-            { type: 'error' }
-          );
-        }
-      }
-    );
-  };
-
-  const stop = () => {
-    setShowStopModal(false);
-    firebase.database().ref('isGameOver').set(false);
-    firebase.database().ref('activeQuote').remove()
+    game?.next()
       .then(() => toast(
-        'Spel gestopt.',
+        message || 'Nieuwe quote geselecteerd.',
         { type: 'success' }
       ))
       .catch(() => toast(
@@ -68,19 +57,26 @@ export const AdminPage: React.FC<{}> = () => {
       ));
   };
 
+  const stop = () => {
+    setShowStopModal(false);
+    auth.admin.getGameRef('isGameOver').set(false);
+    handleNoPermission(
+      auth.admin.getGameRef('activeQuote').remove()
+        .then(() => toast('Spel gestopt.', { type: 'success' }))
+    );
+  };
+
   const start = () => {
     // randomize the quotes list
     const quotesRef = firebase.database().ref('quotes');
     quotesRef.once('value').then(snapshot => {
-      participants?.forEach(({ id }) => firebase.database().ref(`participants/${id}/score`).set(0));
-      quotesRef.set(_.shuffle(snapshot.val()))
-        .then(() => {
-          next('Spel gestart.');
-        })
-        .catch(() => toast(
-          'Je hebt geen toestemming om dit te doen.',
-          { type: 'error' }
-        ));
+      participants?.forEach(({ id }) => auth.admin.getGameRef(`participants/${id}/score`).set(0));
+      const shuffledQuotes = _.shuffle(snapshot.val());
+      handleNoPermission(
+        quotesRef
+          .set(shuffledQuotes)
+          .then(() => next('Spel gestart.'))
+      );
     });
   };
 
@@ -101,31 +97,11 @@ export const AdminPage: React.FC<{}> = () => {
 
   if (hasFinished) {
     return (
-      <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
-        <Text variant='body' textAlign='center' mb={2}>The game has finished. Click here to start over.</Text>
-        <MButton variant='primaryLarge' onClick={stop}>
-          Stop
-        </MButton>
-      </Flex>
+      <FinishedGame stop={stop} />
     );
   } else if (!game?.quote) {
     return (
-      <Flex m={2} alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
-        <Flex maxWidth='300px' width='100%' flexDirection='column'>
-          <Text variant='body' textAlign='center' mb={2}>There is no game active. Click here to start.</Text>
-          <MButton variant='primaryLarge' onClick={start} width='100%'>
-            Start
-          </MButton>
-          <Flex justifyContent='space-between' width='100%' pt={1}>
-            <MButton variant='link' mt={2} onClick={() => firebase.auth().signOut()}>
-              Log out
-            </MButton>
-            <MButton variant='link' mt={2} onClick={() => history.push('/settings')}>
-              Settings
-            </MButton>
-          </Flex>
-        </Flex>
-      </Flex>
+      <UnstartedGame onSettings={() => history.push('/settings')} onStart={start} />
     );
   }
 
@@ -183,17 +159,17 @@ export const AdminPage: React.FC<{}> = () => {
               if (name) gotVotesFrom.push(name);
             }
           });
-          const isCorrect = game?.quote?.answer.toLowerCase() === participant.id;
+          // const isCorrect = game?.quote?.answer.toLowerCase() === participant.id;
           return (
             <Flex px={2} width='100%' justifyContent='center' key={participant.id}>
               <ParticipantBar
                 {...participant}
                 caption={gotVotesFrom.length ? gotVotesFrom.join(', ') : 'No votes'}
-                side={isCorrect ? () => (
-                  <Flex mr={1}>
-                    <FaCheckCircle color={theme.colors.success} size={26} />
-                  </Flex>
-                ) : undefined}
+                // side={isCorrect ? () => (
+                //   <Flex mr={1}>
+                //     <FaCheckCircle color={theme.colors.success} size={26} />
+                //   </Flex>
+                // ) : undefined}
               />
             </Flex>
           );

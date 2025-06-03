@@ -9,7 +9,7 @@ import { QuoteBox } from 'src/molecules/quote-box';
 import { useAuth } from 'src/service/auth';
 import { useFinished } from 'src/service/game/finished';
 import { useParticipants } from 'src/service/game/participants';
-import { useGame } from 'src/service/game/player-context';
+import { useGame } from 'src/service/game/game-context';
 import { PlayerHeader } from './header';
 import { useScore } from 'src/service/game/scoreboard';
 
