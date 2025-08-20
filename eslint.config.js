@@ -6,8 +6,6 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    extends: ["plugin:@typescript-eslint/recommended"],
-
     files: ["**/*.{ts,tsx,js}"],
 
     languageOptions: {
@@ -16,7 +14,7 @@ export default defineConfig([
       parserOptions: {
         tsconfigRootDir: import.meta.dirname,
         projectService: {
-          allowDefaultProject: ["*.js"],
+          allowDefaultProject: ["*.js", "vite.config.ts"],
         },
       },
     },
@@ -45,22 +43,9 @@ export default defineConfig([
           accessibility: "no-public",
         },
       ],
-      "@typescript-eslint/indent": ["error", 4],
+      "@/indent": ["error", 2],
       "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/no-var-requires": "off",
-      "@typescript-eslint/ban-types": [
-        "error",
-        {
-          extendDefaults: true,
-          types: {
-            String: {
-              message: "Use string instead",
-              fixWith: "string",
-            },
-            "{}": false,
-          },
-        },
-      ],
       "react/jsx-one-expression-per-line": "off",
       "comma-dangle": "off",
       indent: "off",

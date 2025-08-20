@@ -12,27 +12,27 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ScoreProvider } from './service/game/scoreboard';
 
 const App: React.FC<{}> = () => (
-    <Router>
-        <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <ToastContainer
-                position='bottom-right'
-                autoClose={1750}
-                draggablePercent={50}
-                hideProgressBar
-            />
-            <LoadingBar />
-            <AuthProvider>
-                <VotesProvider>
-                    <GameProvider>
-                        <ScoreProvider>
-                            <PageManager />
-                        </ScoreProvider>
-                    </GameProvider>
-                </VotesProvider>
-            </AuthProvider>
-        </ThemeProvider>
-    </Router>
+  <Router>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <ToastContainer
+        position='bottom-right'
+        autoClose={1750}
+        draggablePercent={50}
+        hideProgressBar
+      />
+      <LoadingBar />
+      <AuthProvider>
+        <VotesProvider>
+          <GameProvider>
+            <ScoreProvider>
+              <PageManager />
+            </ScoreProvider>
+          </GameProvider>
+        </VotesProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </Router>
 );
 
 export default App;

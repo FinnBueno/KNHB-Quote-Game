@@ -6,16 +6,16 @@ import { useAuth } from './context';
  * This route only works if the user is not authenticated
  */
 export const UnauthenticatedRoute: React.FC<UnauthenticatedRouteProps> = (props) => {
-    const auth = useAuth();
+  const auth = useAuth();
 
-    return !auth?.user ? (
-        <Route
-            path={props.path}
-            component={props.component}
-        />
-    ) : (
-        <Redirect to='/game' />
-    );
+  return !auth?.user ? (
+    <Route
+      path={props.path}
+      component={props.component}
+    />
+  ) : (
+    <Redirect to='/game' />
+  );
 };
 
 interface UnauthenticatedRouteProps {

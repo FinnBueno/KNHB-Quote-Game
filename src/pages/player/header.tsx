@@ -38,14 +38,14 @@ z-index: 1;
 `;
 
 export const PlayerHeader: React.FC<PlayerHeaderProps> = ({ place, score }) => (
-    <DecoratedFlex justifyContent='space-between' width='100%' p={2}>
-        <Flex flexDirection='column' alignItems='center'>
-            <Text variant='caption'>Plaats</Text>
-            <Text variant='title'>{place}e</Text>
-        </Flex>
-        <Flex flexDirection='column' alignItems='center'>
-            <Text variant='caption'>Punten</Text>
-            <Text variant='title'>{score}</Text>
-        </Flex>
-    </DecoratedFlex>
+  <DecoratedFlex justifyContent='space-between' width='100%' p={2}>
+    <Flex flexDirection='column' alignItems='center'>
+      <Text variant='caption'>Plaats</Text>
+      <Text variant='title'>{place}e</Text>
+    </Flex>
+    <Flex flexDirection='column' alignItems='center'>
+      <Text variant='caption'>Punten</Text>
+      <Text variant='title'>{score}</Text>
+    </Flex>
+  </DecoratedFlex>
 )
