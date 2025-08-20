@@ -20,7 +20,6 @@ export type Game = {
 export const GameContext = React.createContext<Game>({ persistAnswers: () => {}, vote: () => {}, next: () => {} });
 
 export const GameProvider: React.FC<{}> = (props) => {
-
   const [quote, setQuote] = useState<Quote | undefined>(undefined);
   const participants = useParticipants();
 

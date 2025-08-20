@@ -6,7 +6,8 @@ import { PlayerPage } from "./player";
 import { StartPage } from "./start";
 import { AdminPage } from "./admin";
 import { SettingsPage } from "./settings";
-import { QuotesPage } from "./quotes";
+import { QuotesPage } from "./quotes/[id]";
+import { GameSelectionPage } from "./quotes/page";
 
 export const PageManager: React.FC<{}> = () => {
   const location = useLocation();
@@ -16,7 +17,8 @@ export const PageManager: React.FC<{}> = () => {
         <Switch location={location}>
           <Route path="/admin" component={AdminPage} />
           <Route path="/settings" component={SettingsPage} />
-          <Route path="/quotes" component={QuotesPage} />
+          <Route path="/quotes/:gameid" component={QuotesPage} />
+          <Route path="/quotes" exact component={GameSelectionPage} />
           <AuthenticatedRoute path="/game" component={PlayerPage} />
           <UnauthenticatedRoute path="/" component={StartPage} />
         </Switch>
