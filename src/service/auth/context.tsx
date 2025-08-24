@@ -3,6 +3,8 @@ import firebase from "firebase";
 import { Flex, Heading } from "rebass";
 import { SyncLoader } from 'react-spinners';
 import { Participant } from "../game/participants";
+import { QUERY_REFS } from "../queries";
+import { useGameId } from "../game/game-id-context";
 
 export type Auth = {
     admin: {
@@ -19,9 +21,12 @@ export type Auth = {
 
 export const AuthContext = React.createContext<Auth>({ admin: { setLoading: _ => {} }, loading: true, user: undefined, setParticipant: () => {} });
 
-export const AuthProvider: React.FC<{}> = (props) => {
+const LOCAL_STORAGE_PLAYER_ID_KEY = 'localAuthIdentifier';
 
-  const [localAuthIdentifier, setLocalAuthIdentifier] = useState<string | undefined>(localStorage.getItem('localAuthIdentifier') || undefined);
+export const AuthProvider: React.FC<{}> = (props) => {
+  const { gameId } = useGameId();
+
+  const [locallySavedPlayerId, setLocallySavedPlayerId] = useState<string | undefined>(localStorage.getItem(LOCAL_STORAGE_PLAYER_ID_KEY) || undefined);
 
   const [auth, setAuth] = useState<Participant | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -33,11 +38,23 @@ export const AuthProvider: React.FC<{}> = (props) => {
 
   const fetchInitialAuthState = () => {
     setLoading(true);
-    firebase.database().ref(`participants/${localAuthIdentifier}`).once('value', snapshot => {
+
+    if (!gameId) {
+      setLoading(false);
+      return;
+    }
+
+    if (!locallySavedPlayerId) {
+      setLoading(false);
+      setAuth(undefined);
+      return;
+    }
+
+    QUERY_REFS.participant({ gameId, playerId: locallySavedPlayerId }).once('value', snapshot => {
       setLoading(false);
       setAuth(snapshot.exists() ? {
         ...snapshot.val(),
-        id: localAuthIdentifier,
+        id: locallySavedPlayerId,
       } : undefined);
     }, _ => {
       setLoading(false);
@@ -50,7 +67,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
     setAdminLoading(false);
   }
 
-  useEffect(fetchInitialAuthState, [localAuthIdentifier]);
+  useEffect(fetchInitialAuthState, [locallySavedPlayerId]);
   useEffect(() => {
     setAdminLoading(true);
     firebase.app().auth().onAuthStateChanged(authStateChanged, () => setAdminError(true));
@@ -63,11 +80,11 @@ export const AuthProvider: React.FC<{}> = (props) => {
         setParticipant: (id) => {
           setLoading(true);
           if (id) {
-            localStorage.setItem('localAuthIdentifier', id);
+            localStorage.setItem(LOCAL_STORAGE_PLAYER_ID_KEY, id);
           } else {
-            localStorage.removeItem('localAuthIdentifier');
+            localStorage.removeItem(LOCAL_STORAGE_PLAYER_ID_KEY);
           }
-          setLocalAuthIdentifier(id);
+          setLocallySavedPlayerId(id);
         },
         loading,
         error,

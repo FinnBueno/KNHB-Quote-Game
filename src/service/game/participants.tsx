@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import firebase from "firebase";
+import { useParams } from "react-router-dom";
+import { QUERY_REFS } from "../queries";
+import { useGameId } from "./game-id-context";
 
 export type Participant = {
     id: string;
@@ -9,7 +12,9 @@ export type Participant = {
     score: number;
 }
 
-export const useParticipants = () => {
+export const useParticipants = (specificGameId?: string) => {
+  const { gameId } = useGameId();
+
   const [participants, setParticipants] = useState<Participant[]>();
 
   useEffect(() => {
@@ -25,10 +30,13 @@ export const useParticipants = () => {
       });
       setParticipants(result);
     };
-    const ref = firebase.database().ref('participants');
+
+    if (!gameId) return;
+
+    const ref = QUERY_REFS.participants({ gameId });
     ref.on('value', handle);
     return () => ref.off('value', handle);
-  }, []);
+  }, [gameId]);
 
   return participants;
 }

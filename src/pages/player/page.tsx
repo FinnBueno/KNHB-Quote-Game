@@ -9,15 +9,22 @@ import { QuoteBox } from 'src/molecules/quote-box';
 import { useAuth } from 'src/service/auth';
 import { useFinished } from 'src/service/game/finished';
 import { useParticipants } from 'src/service/game/participants';
-import { useGame } from 'src/service/game/player-context';
+import { usePlayerControls } from 'src/service/game/player-context';
 import { PlayerHeader } from './header';
 import { useScore } from 'src/service/game/scoreboard';
+import { registerGameId } from 'src/hooks/use-game-id';
+import { useGameId } from 'src/service/game/game-id-context';
+import { Redirect, useHistory } from 'react-router-dom';
 
 type Scoreboard = {[key: number]: string[]};
 
 export const PlayerPage: React.FC<{}> = () => {
+  registerGameId();
+  const { gameId } = useGameId();
+
   const participants = useParticipants();
-  const game = useGame();
+  const game = usePlayerControls();
+
   const auth = useAuth();
   const hasFinished = useFinished();
   const score = useScore();
@@ -25,6 +32,15 @@ export const PlayerPage: React.FC<{}> = () => {
   const { width, height } = useWindowSize();
   const quote = game?.quote;
   const votedFor = _.get(game?.quote?.votes, auth?.user?.id || '', undefined);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!auth?.user && !auth?.loading && gameId) {
+      if (auth) auth.setParticipant(undefined);
+      history.push(`/player/${gameId}`);
+    }
+  }, [gameId])
 
   /*
     calculate the place of this player, it's a little complicated...
@@ -87,16 +103,16 @@ export const PlayerPage: React.FC<{}> = () => {
     return (
       <Flex m={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
         <Heading variant='heading3' textAlign='center'>
-                    Je bent op de
+          Je bent op de
         </Heading>
         <Heading variant='heading1' textAlign='center'>
           {place}e
         </Heading>
         <Heading variant='heading3' textAlign='center'>
-                    plek gekomen met {participants?.find(p => p?.id === auth?.user?.id)?.score} punten
+          plek gekomen met {participants?.find(p => p?.id === auth?.user?.id)?.score} punten
         </Heading>
         <MButton variant='link' mt={3} onClick={() => auth?.setParticipant(undefined)}>
-                    Ben jij niet {auth?.user?.name}? Druk dan hier
+          Ben jij niet {auth?.user?.name}? Druk dan hier
         </MButton>
       </Flex>
     )
@@ -105,13 +121,13 @@ export const PlayerPage: React.FC<{}> = () => {
     return (
       <Flex m={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
         <Heading variant='heading1' textAlign='center'>
-                    Even rustig
+          Even rustig
         </Heading>
         <Text variant='body'>
-                    We gaan zo beginnen ☕
+          We gaan zo beginnen ☕
         </Text>
         <MButton variant='link' mt={3} onClick={() => auth?.setParticipant(undefined)}>
-                    Ben jij niet {auth?.user?.name}? Druk dan hier
+          Ben jij niet {auth?.user?.name}? Druk dan hier
         </MButton>
       </Flex>
     )
@@ -121,7 +137,7 @@ export const PlayerPage: React.FC<{}> = () => {
     <Flex width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
       {showConfetti && <Confetti width={width} height={height} recycle={false} gravity={.35} />}
       {/* TODO: There's no subscription for a player's score, and thus it doesn't get updated, fix that */}
-      <PlayerHeader place={place || Object.keys(map).length} score={score} pastFirstQuote={(game?.quote?.id || 0) > 0} />
+      <PlayerHeader place={place ?? Object.keys(map).length} score={score} pastFirstQuote={(game?.quote?.id || 0) > 0} />
       <Text variant='body' textAlign='center' mb={1}>Wie sprak de woorden...</Text>
       <QuoteBox width='100%' justifyContent='center' mb={3}>{quote.content}</QuoteBox>
       {participants ? participants.sort((a, b) => {

@@ -1,70 +1,83 @@
 import React, { useContext, useEffect, useState } from "react";
 import firebase from "firebase";
 import { useParticipants } from "./participants";
+import { QUERY_REFS } from "src/service/queries";
+import { useGameId } from "./game-id-context";
 
 type Quote = {
-    content: string;
-    answer: string;
-    id: number;
-    votes: { [key: string]: string };
-    showAnswer?: boolean;
+  content: string;
+  answer: string;
+  id: number;
+  votes: { [key: string]: string };
+  showAnswer?: boolean;
 };
 
 export type Game = {
-    quote?: Quote;
-    persistAnswers: () => void;
-    vote: (_id: string, _voter: string) => void;
-    next: (_after: (_success: boolean) => void) => void;
+  quote?: Quote;
+  persistAnswers: () => void;
+  vote: (_id: string, _voter: string) => void;
+  next: (_after: (_success: boolean) => void) => void;
 } | undefined;
 
 export const GameContext = React.createContext<Game>({ persistAnswers: () => {}, vote: () => {}, next: () => {} });
 
 export const GameProvider: React.FC<{}> = (props) => {
   const [quote, setQuote] = useState<Quote | undefined>(undefined);
+  const { gameId } = useGameId();
   const participants = useParticipants();
 
   useEffect(() => {
     const activeQuoteListener = (data: firebase.database.DataSnapshot) => setQuote(data.val());
 
-    const activeQuote = firebase.database().ref('activeQuote');
+    if (!gameId) return;
+
+    const activeQuote = QUERY_REFS.activeQuote({ gameId });
     activeQuote.on('value', activeQuoteListener);
 
     return () => activeQuote.off('value', activeQuoteListener);
-  }, []);
+  }, [gameId]);
 
-  const vote = (id: string, voter: string) => firebase.database().ref(`activeQuote/votes/${voter}`).set(id);
+  const vote = (id: string, playerId: string) => {
+    if (!gameId) return;
+    QUERY_REFS.currentQuoteVoteForPlayer({ gameId, playerId }).set(id);
+  };
 
   const next = (after: (_success: boolean) => void) => {
-    const activeQuoteRef = firebase.database().ref(`activeQuote`);
-    const newId = quote ? (quote.id + 1) : 0;
-    firebase.database().ref(`quotes/${newId}`).once('value', snapshot => {
+    if (!gameId) return;
+
+    const activeQuoteRef = QUERY_REFS.activeQuote({ gameId });
+    const quoteId = quote ? (quote.id + 1) : 0;
+    const isGameOverRef = QUERY_REFS.isGameOver({ gameId });
+
+    QUERY_REFS.quoteById({ gameId, quoteId }).once('value', snapshot => {
       if (snapshot.exists()) {
-                
-        firebase.database().ref('isGameOver').set(false);
+        isGameOverRef.set(false);
         activeQuoteRef.set({
           ...snapshot.val(),
-          id: newId
+          id: quoteId
         }, e => after(e === null));
       } else {
         // game is over!
-        firebase.database().ref('isGameOver').set(true);
+        isGameOverRef.set(true);
         activeQuoteRef.remove();
       }
     })
   };
 
   const persistAnswers = () => {
-    const activeQuote = firebase.database().ref('activeQuote');
+    if (!gameId) return;
+
+    const activeQuote = QUERY_REFS.activeQuote({ gameId })
     activeQuote.once('value', snapshot => {
       const val = snapshot.val();
       if (!val) return;
       if (!val.votes) return;
 
-      Object.keys(val.votes).forEach(key => {
-        const vote = val.votes[key];
+      Object.keys(val.votes).forEach(playerId => {
+        const vote = val.votes[playerId];
         if (val.answer.toLowerCase() === vote) {
-          const newScore = (participants?.find(p => p.id === key)?.score || 0) + 1;
-          firebase.database().ref(`participants/${key}/score`).set(newScore);
+          const newScore = (participants?.find(p => p.id === playerId)?.score || 0) + 1;
+          QUERY_REFS.playerScore({ gameId, playerId }).set(newScore);
         }
       });
     });
@@ -79,4 +92,4 @@ export const GameProvider: React.FC<{}> = (props) => {
   );
 }
 
-export const useGame = () => useContext(GameContext);
+export const usePlayerControls = () => useContext(GameContext);

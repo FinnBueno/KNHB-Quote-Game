@@ -1,13 +1,14 @@
 import React from "react";
 import { Route, Switch, useLocation } from "react-router-dom";
 import { Flex } from "rebass";
-import { AuthenticatedRoute, UnauthenticatedRoute } from "src/service/auth";
-import { PlayerPage } from "./player";
-import { StartPage } from "./start";
-import { AdminPage } from "./admin";
-import { SettingsPage } from "./settings";
-import { QuotesPage } from "./quotes/[id]";
-import { GameSelectionPage } from "./quotes/page";
+import { PlayerPage } from "src/pages/player";
+import { StartPage } from "src/pages/start";
+import { AdminPage } from "src/pages/admin/[id]";
+import { SettingsPage } from "src/pages/settings";
+import { QuotesPage } from "src/pages/quotes/[id]";
+import { QuotesGameSelectionPage } from "src/pages/quotes";
+import { ExplanationPage } from "src/pages/explanation";
+import { AdminGameSelectionPage } from "./admin/page";
 
 export const PageManager: React.FC<{}> = () => {
   const location = useLocation();
@@ -15,12 +16,14 @@ export const PageManager: React.FC<{}> = () => {
     <Flex justifyContent="center" width="100%" height="auto" minHeight="100%">
       <Flex flexDirection="column" width="100%" height="auto" minHeight="100%">
         <Switch location={location}>
-          <Route path="/admin" component={AdminPage} />
+          <Route path="/admin/:gameid" component={AdminPage} />
+          <Route path="/admin" exact component={AdminGameSelectionPage} />
           <Route path="/settings" component={SettingsPage} />
           <Route path="/quotes/:gameid" component={QuotesPage} />
-          <Route path="/quotes" exact component={GameSelectionPage} />
-          <AuthenticatedRoute path="/game" component={PlayerPage} />
-          <UnauthenticatedRoute path="/" component={StartPage} />
+          <Route path="/quotes" exact component={QuotesGameSelectionPage} />
+          <Route path="/game/:gameid" component={PlayerPage} />
+          <Route path="/player/:gameid" component={StartPage} />
+          <Route path="/" component={ExplanationPage} />
         </Switch>
       </Flex>
     </Flex>

@@ -5,21 +5,27 @@ import { Flex, Heading, Text } from "rebass";
 import { useFinished } from "src/service/game/finished";
 import { useTotalQuotes } from "src/service/game/get-total-quotes";
 import { Participant, useParticipants } from "src/service/game/participants";
-import { useGame } from "src/service/game/player-context";
-import { useVotes } from "src/service/game/votes-conext";
+import { usePlayerControls } from "src/service/game/player-context";
+import { useVotes } from "src/service/game/votes-context";
 import { VoteBar } from "./votebar";
 import { PresentationTemplate } from "src/templates/PresentationTemplate";
 import QRCode from "react-qr-code";
 import { useLocation, useParams } from "react-router-dom";
+import { QUERY_REFS } from "src/service/queries";
+import { registerGameId } from "src/hooks/use-game-id";
+import { useGameId } from "src/service/game/game-id-context";
 
 export const QuotesPage: React.FC<{}> = () => {
+  registerGameId();
+  const { gameId } = useGameId();
+
   const participants = useParticipants();
   const votes = useVotes();
-  const game = useGame();
+  const game = usePlayerControls();
+
   const [revealAnswer, setRevealAnswer] = useState(false);
   const hasFinished = useFinished();
-  const totalQuotes = useTotalQuotes();
-  const pathParams = useParams<{ gameid: string }>();
+  const totalQuotes = useTotalQuotes(gameId);
   const max = (participants?.length || 2) - 1;
 
   const highest = participants?.reduce(
@@ -33,7 +39,9 @@ export const QuotesPage: React.FC<{}> = () => {
     },
     undefined
   );
+
   const winners = [highest];
+
   participants?.forEach((p) => {
     if (p.score === highest?.score && highest?.id !== p.id) {
       winners.push(p);
@@ -42,16 +50,16 @@ export const QuotesPage: React.FC<{}> = () => {
 
   // listen when the answer should be shown
   useEffect(() => {
+    if (!gameId) return;
+
     const revealAnswer = (snapshot: firebase.database.DataSnapshot) =>
       setRevealAnswer(!!snapshot.val());
 
-    firebase.database().ref("activeQuote/showAnswer").on("value", revealAnswer);
+    QUERY_REFS.showAnswer({ gameId }).on("value", revealAnswer);
     return () =>
-      firebase
-        .database()
-        .ref("activeQuote/showAnswer")
+      QUERY_REFS.showAnswer({ gameId })
         .off("value", revealAnswer);
-  }, []);
+  }, [gameId]);
 
   return (
     <PresentationTemplate>
@@ -114,7 +122,7 @@ export const QuotesPage: React.FC<{}> = () => {
               }}
             >
               {participants?.map((participant) => (
-                <Flex mx={3}>
+                <Flex mx={3} key={participant.id}>
                   <VoteBar
                     revealAnswer={revealAnswer}
                     isCorrect={
@@ -145,7 +153,7 @@ export const QuotesPage: React.FC<{}> = () => {
             <Text variant="heading3" color="background" textAlign="center" my={4}>
               Scan deze jongen om te joinen!
             </Text>
-            <QRCode value={`${window.location.origin}/game/${pathParams.gameid}`} />
+            <QRCode value={`${window.location.origin}/player/${gameId}`} />
           </Flex>
         )
       ) : null}

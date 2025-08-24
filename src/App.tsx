@@ -7,9 +7,10 @@ import { PageManager } from './pages/router';
 import { AuthProvider } from './service/auth/context';
 import { LoadingBar } from './molecules/loading-bar';
 import { GameProvider } from './service/game/player-context';
-import { VotesProvider } from './service/game/votes-conext';
+import { VotesProvider } from './service/game/votes-context';
 import 'react-toastify/dist/ReactToastify.css';
 import { ScoreProvider } from './service/game/scoreboard';
+import { GameIdProvider } from './service/game/game-id-context';
 
 const App: React.FC<{}> = () => (
   <Router>
@@ -22,15 +23,17 @@ const App: React.FC<{}> = () => (
         hideProgressBar
       />
       <LoadingBar />
-      <AuthProvider>
-        <VotesProvider>
-          <GameProvider>
-            <ScoreProvider>
-              <PageManager />
-            </ScoreProvider>
-          </GameProvider>
-        </VotesProvider>
-      </AuthProvider>
+      <GameIdProvider>
+        <AuthProvider>
+          <VotesProvider>
+            <GameProvider>
+              <ScoreProvider>
+                <PageManager />
+              </ScoreProvider>
+            </GameProvider>
+          </VotesProvider>
+        </AuthProvider>
+      </GameIdProvider>
     </ThemeProvider>
   </Router>
 );

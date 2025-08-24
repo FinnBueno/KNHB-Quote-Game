@@ -7,15 +7,14 @@ import 'firebase/auth';
 import { toast } from 'react-toastify';
 import { MButton } from 'src/atoms';
 import { useAuth } from 'src/service/auth';
-import { useTotalQuotes } from 'src/service/game/get-total-quotes';
 
 export const SettingsPage: React.FC<{}> = () => {
   const auth = useAuth();
   const history = useHistory();
-  const totalQuotes = useTotalQuotes();
   const [loading, setLoading] = useState<boolean>(false);
 
   const resetQuotes = () => {
+    // todo: make this work, deprecated atm
     const updateQuotesRef = firebase.database().ref('/updateQuotes');
     setLoading(true);
     updateQuotesRef.set(true);
@@ -47,7 +46,7 @@ export const SettingsPage: React.FC<{}> = () => {
         <Text variant='body' textAlign='center' mb={2}>
           {loading ?
             'Currently loading all quotes from Discord into the database. This should only take a few seconds!' 
-            : `There are currently ${totalQuotes} quotes registered. Click the button below to re-import all quotes from Discord.`}
+            : 'Click the button below to re-import all quotes from Discord.'}
         </Text>
         <MButton disabled={loading} variant='primaryLarge' onClick={resetQuotes} width='100%'>
           {loading ? (

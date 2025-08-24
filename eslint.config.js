@@ -3,6 +3,7 @@ import tsparser from "@typescript-eslint/parser";
 import stylistic from "@stylistic/eslint-plugin";
 import react from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
+import eslintPluginPrettier from 'eslint-plugin-prettier'
 
 export default defineConfig([
   {
@@ -23,6 +24,7 @@ export default defineConfig([
       react,
       "@typescript-eslint": tseslint.plugin,
       "@stylistic": stylistic,
+      eslintPluginPrettier
     },
 
     env: {

@@ -7,7 +7,8 @@
     "start": "vite",
     "lint": "eslint src",
     "build": "tsc -b && vite build",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "npm run build && firebase deploy",
+    "db-deploy": "firebase deploy --only database"
   },
   "browserslist": {
     "production": [
@@ -39,6 +40,7 @@
     "@types/yup": "^0.26.27",
     "dotenv": "^8.2.0",
     "emotion-theming": "^10.0.27",
+    "eslint-plugin-prettier": "^5.5.4",
     "firebase": "^8.3.3",
     "lodash": "^4.17.15",
     "react": "^17.0.2",
