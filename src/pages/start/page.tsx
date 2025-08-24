@@ -29,7 +29,7 @@ export const StartPage: React.FC<{}> = () => {
   }
 
   return (
-    <Flex m={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+    <Flex p={2} flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
       <Heading variant='heading1' mb={1}>Wie ben jij?</Heading>
       <Text variant='body' textAlign='center' mb={3}>Wel eerlijk zeggen anders word ik boos</Text>
       {participants?.map(participant => (

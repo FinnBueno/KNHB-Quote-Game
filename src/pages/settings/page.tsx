@@ -41,7 +41,7 @@ export const SettingsPage: React.FC<{}> = () => {
   }
 
   return (
-    <Flex m={2} alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+    <Flex p={2} alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
       <Flex maxWidth='300px' width='100%' flexDirection='column'>
         <Text variant='body' textAlign='center' mb={2}>
           {loading ?

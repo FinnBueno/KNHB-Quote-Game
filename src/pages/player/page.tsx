@@ -101,7 +101,7 @@ export const PlayerPage: React.FC<{}> = () => {
 
   if (hasFinished) {
     return (
-      <Flex m={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+      <Flex p={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
         <Heading variant='heading3' textAlign='center'>
           Je bent op de
         </Heading>
@@ -119,14 +119,17 @@ export const PlayerPage: React.FC<{}> = () => {
   }
   if (!quote) {
     return (
-      <Flex m={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
+      <Flex p={2} width='100%' flexDirection='column' alignItems='center' justifyContent='center' height='100%' minHeight='auto'>
         <Heading variant='heading1' textAlign='center'>
           Even rustig
         </Heading>
         <Text variant='body'>
           We gaan zo beginnen ☕
         </Text>
-        <MButton variant='link' mt={3} onClick={() => auth?.setParticipant(undefined)}>
+        <MButton variant='link' mt={3} onClick={() => {
+          auth?.setParticipant(undefined);
+          history.push(`/player/${gameId}`);
+        }}>
           Ben jij niet {auth?.user?.name}? Druk dan hier
         </MButton>
       </Flex>
@@ -155,7 +158,7 @@ export const PlayerPage: React.FC<{}> = () => {
         />
       )) : (<></>)}
       <MButton variant='link' mt={3} mb={3} onClick={() => auth?.setParticipant(undefined)}>
-                Ben jij niet {auth?.user?.name}? Druk dan hier
+        Ben jij niet {auth?.user?.name}? Druk dan hier
       </MButton>
     </Flex>
   );
